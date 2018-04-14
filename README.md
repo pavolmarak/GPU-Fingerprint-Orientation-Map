@@ -6,6 +6,8 @@ This project depends on the following **3rd-party libraries**:
 * [OpenCV 3.4.1](https://opencv.org/releases.html) (tested)
 * [QCustomPlot 2.0.0](http://www.qcustomplot.com/) (tested)
 
+You need to provide valid paths to these libraries and their header files in `.pro` file.
+
 **Important notice:**
 This software was tested only in Windows 10 Education.
 
