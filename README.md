@@ -9,7 +9,7 @@ This project depends on the following **3rd-party libraries**:
 **Important notice:**
 This software was tested only in Windows 10 Education.
 
-For detailed results please consult this [log](#Log).
+For detailed results please consult this [log](#log).
 
 ![alt text](img/performance.png "CPU vs. GPU performance comparison graph")
 
