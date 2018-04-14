@@ -9,11 +9,11 @@ This project depends on the following **3rd-party libraries**:
 **Important notice:**
 This software was tested only in Windows 10 Education.
 
-For detailed results please consult this [log][].
+For detailed results please consult this [log](#Log).
 
 ![alt text](img/performance.png "CPU vs. GPU performance comparison graph")
 
-### Log [log] ###
+### Log ###
 
 ```cpp
 Dimensions: 50 x 50
