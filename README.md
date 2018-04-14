@@ -13,7 +13,7 @@ For detailed results please consult this [log](#Log).
 
 ![alt text](img/performance.png "CPU vs. GPU performance comparison graph")
 
-### Log ###
+# Log #
 
 ```cpp
 Dimensions: 50 x 50
