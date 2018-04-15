@@ -118,7 +118,6 @@ void MainWindow::on_runTestBTN_clicked()
 
         currWidth+=ui->increment->value();
         currHeight+=ui->increment->value();
-
     }
 
     if(ui->howManyIncrements->value() > 0){
