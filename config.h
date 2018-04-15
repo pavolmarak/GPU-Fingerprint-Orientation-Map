@@ -10,4 +10,4 @@ struct GaussianBlurSettings {
 typedef struct GaussianBlurSettings GAUSSIAN_BLUR_SETTINGS;
 
 #endif // CONFIG_H
-//hello
+
