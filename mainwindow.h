@@ -32,10 +32,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QImage img;
-    int dims_start;
-    int dims_max;
-    double numTests;
-    int blockSize;
     QVector<double> xdata, timesCpu, timesGpu;
 };
 

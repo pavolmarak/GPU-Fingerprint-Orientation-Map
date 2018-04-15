@@ -5,7 +5,7 @@ OMap::OMap(QObject *parent) : QObject(parent)
 
 }
 
-void OMap::setParams(const cv::Mat &imgFingerprint_, int &blockSize_, GAUSSIAN_BLUR_SETTINGS &gaussBlurBasic_, GAUSSIAN_BLUR_SETTINGS &gaussBlurAdvanced_)
+void OMap::setParams(const cv::Mat &imgFingerprint_, int blockSize_, GAUSSIAN_BLUR_SETTINGS &gaussBlurBasic_, GAUSSIAN_BLUR_SETTINGS &gaussBlurAdvanced_)
 {
     this->imgFingerprint = imgFingerprint_;
     this->blockSize = blockSize_;
@@ -64,7 +64,7 @@ double OMap::computeBasicMap()
             this->oMap_basic.at<double>(i, j) = 0.5 * atan2(sinTheta.at<double>(i, j), cosTheta.at<double>(i, j));
         }
     }
-    return timer.elapsed()/1000.0;
+    return timer.nsecsElapsed()/1000000000.0;
 }
 
 void OMap::computeAdvancedMap()

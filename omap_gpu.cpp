@@ -8,7 +8,7 @@ OMap_GPU::OMap_GPU(QObject *parent) : QObject(parent)
 }
 
 
-void OMap_GPU::setParams(af::array imgFingerprint_, int &blockSize_, GAUSSIAN_BLUR_SETTINGS &gaussBlurBasic_, GAUSSIAN_BLUR_SETTINGS &gaussBlurAdvanced_)
+void OMap_GPU::setParams(af::array imgFingerprint_, int blockSize_, GAUSSIAN_BLUR_SETTINGS &gaussBlurBasic_, GAUSSIAN_BLUR_SETTINGS &gaussBlurAdvanced_)
 {
     this->imgFingerprint = imgFingerprint_;
     this->blockSize = blockSize_;

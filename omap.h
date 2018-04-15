@@ -15,7 +15,7 @@ class OMap : public QObject
     Q_OBJECT
 public:
     explicit OMap(QObject *parent = nullptr);
-    void setParams(const cv::Mat &imgFingerprint_, int &blockSize_, GAUSSIAN_BLUR_SETTINGS &gaussBlurBasic_, GAUSSIAN_BLUR_SETTINGS &gaussBlurAdvanced_);
+    void setParams(const cv::Mat &imgFingerprint_, int blockSize_, GAUSSIAN_BLUR_SETTINGS &gaussBlurBasic_, GAUSSIAN_BLUR_SETTINGS &gaussBlurAdvanced_);
     double computeBasicMap();
     void computeAdvancedMap();
     void drawBasicMap(const cv::Mat &imgOriginal);

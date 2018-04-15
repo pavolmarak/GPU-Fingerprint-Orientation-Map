@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>707</width>
-    <height>447</height>
+    <width>855</width>
+    <height>537</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,17 +20,209 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
+          <property name="title">
+           <string>Performance test adjustment</string>
           </property>
-         </spacer>
+          <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item alignment="Qt::AlignRight">
+              <widget class="QLabel" name="omapBlockSizeLabel">
+               <property name="text">
+                <string>O-Map blocksize</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="omapBlockSize">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>999999</number>
+               </property>
+               <property name="value">
+                <number>13</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_4">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="title">
+              <string>Image size</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_5">
+                <item>
+                 <widget class="QGroupBox" name="groupBox_2">
+                  <property name="title">
+                   <string>Starting image size</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_2">
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_6">
+                     <item>
+                      <widget class="QLabel" name="label">
+                       <property name="text">
+                        <string>Width</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="currentWidth">
+                       <property name="minimum">
+                        <number>3</number>
+                       </property>
+                       <property name="maximum">
+                        <number>999999</number>
+                       </property>
+                       <property name="singleStep">
+                        <number>50</number>
+                       </property>
+                       <property name="value">
+                        <number>50</number>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_7">
+                     <item>
+                      <widget class="QLabel" name="label_2">
+                       <property name="text">
+                        <string>Height</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="currentHeight">
+                       <property name="minimum">
+                        <number>3</number>
+                       </property>
+                       <property name="maximum">
+                        <number>999999</number>
+                       </property>
+                       <property name="singleStep">
+                        <number>50</number>
+                       </property>
+                       <property name="value">
+                        <number>50</number>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="groupBox_3">
+                  <property name="title">
+                   <string>Test length configuration</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_3">
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_8">
+                     <item>
+                      <widget class="QLabel" name="label_3">
+                       <property name="text">
+                        <string>Size increment</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="increment">
+                       <property name="minimum">
+                        <number>1</number>
+                       </property>
+                       <property name="maximum">
+                        <number>999999</number>
+                       </property>
+                       <property name="singleStep">
+                        <number>1</number>
+                       </property>
+                       <property name="value">
+                        <number>50</number>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_9">
+                     <item>
+                      <widget class="QLabel" name="label_4">
+                       <property name="text">
+                        <string>How many increments?</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="howManyIncrements">
+                       <property name="minimum">
+                        <number>0</number>
+                       </property>
+                       <property name="maximum">
+                        <number>999999</number>
+                       </property>
+                       <property name="singleStep">
+                        <number>1</number>
+                       </property>
+                       <property name="value">
+                        <number>10</number>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_10">
+                <item alignment="Qt::AlignRight">
+                 <widget class="QLabel" name="omapBlockSizeLabel_2">
+                  <property name="text">
+                   <string>Number of tests per size</string>
+                  </property>
+                 </widget>
+                </item>
+                <item alignment="Qt::AlignLeft">
+                 <widget class="QSpinBox" name="numTests">
+                  <property name="maximum">
+                   <number>999999</number>
+                  </property>
+                  <property name="value">
+                   <number>50</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="runTestBTN">
@@ -46,7 +238,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_2">
+         <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -63,11 +255,50 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QCustomPlot" name="plot" native="true"/>
+         <widget class="QCustomPlot" name="plot" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_5">
+      <property name="title">
+       <string>Log</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QTextEdit" name="log">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>300</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Green color indicates shorter processing time</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -76,7 +307,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>707</width>
+     <width>855</width>
      <height>17</height>
     </rect>
    </property>

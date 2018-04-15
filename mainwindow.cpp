@@ -7,14 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
-
-    // inits
-    this->dims_start = 50;
-    this->dims_max = 3000;
-    this->numTests = 50;
-    this->blockSize = 13;
-
     // custom plot
     ui->plot->addGraph(); // CPU
     ui->plot->addGraph(); // GPU
@@ -26,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->graph(1)->setData(this->xdata, this->timesGpu);
     ui->plot->xAxis->setLabel("Image size");
     ui->plot->yAxis->setLabel("Average Time [s]");
-    ui->plot->xAxis->setRange(this->dims_start, this->dims_max);
+    ui->plot->xAxis->setRange(0, 3000);
     ui->plot->yAxis->setRange(0, 0.01);
     ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->plot->legend->setVisible(true);
@@ -51,42 +43,85 @@ void MainWindow::on_runTestBTN_clicked()
     OMap omap;
     OMap_GPU omap_gpu;
 
+    int currWidth = ui->currentWidth->value();
+    int currHeight = ui->currentHeight->value();
+
+    if(currHeight < ui->omapBlockSize->value() || currWidth < ui->omapBlockSize->value()){
+        ui->log->append("<span style=\"color:red;\">O-Map blocksize must be equal or higher than any of the dimensions.</span><br>");
+        return;
+    }
+
+    this->xdata.clear();
+    this->timesCpu.clear();
+    this->timesGpu.clear();
+
+    if(ui->howManyIncrements->value() > 0){
+        qDebug() << "Test time:" << QDateTime::currentDateTime().toString().toUpper();
+        ui->log->append("<b>Test time:</b> " + QDateTime::currentDateTime().toString().toUpper());
+    }
+
     // testovanie pre rozne rozmery
-    for(int cc = this->dims_start;cc<=this->dims_max;cc+=50){
-        qDebug() << "Dimensions:" << cc << "x" << cc;
+    for(int cc = 0;cc<ui->howManyIncrements->value();cc++){
         // loading an image
         // imgMat = cv::imread("./db/94_3.tif",cv::IMREAD_GRAYSCALE);
-        imgMat = cv::Mat(cc,cc,CV_8UC1);
+        imgMat = cv::Mat(currHeight,currWidth,CV_8UC1);
         cv::transpose(imgMat,imgMat_transposed);
         af::array imgAf(imgMat.rows, imgMat.cols, imgMat_transposed.data);
 
         // CPU computation
-        omap.setParams(imgMat,this->blockSize,gbsBasic, gbsAdvanced);
-
-        double accumCPU=0.0;
-        for(int i=0;i<this->numTests;i++){
+        omap.setParams(imgMat,ui->omapBlockSize->value(),gbsBasic, gbsAdvanced);
+        double accumCPU=0.000000;
+        for(int i=0;i<ui->numTests->value();i++){
             accumCPU += omap.computeBasicMap();
+            qApp->processEvents();
         }
-        qDebug() << "Time CPU:" << accumCPU/this->numTests;
 
         // GPU computation
-        omap_gpu.setParams(imgAf,this->blockSize,gbsBasic,gbsAdvanced);
-        omap_gpu.computeBasicMap(); // warm-up
+        omap_gpu.setParams(imgAf,ui->omapBlockSize->value(),gbsBasic,gbsAdvanced);
+        // GPU warm-up
+        omap_gpu.computeBasicMap();
         //omap_gpu.drawBasicMap();
         double accumGPU=0.0;
-        for(int i=0;i<this->numTests;i++){
+        for(int i=0;i<ui->numTests->value();i++){
             accumGPU += omap_gpu.computeBasicMap();
+            qApp->processEvents();
         }
-        qDebug() << "Time GPU:" << accumGPU/this->numTests;
 
+        // printing out
+        qDebug() << "\nDimensions:" << currWidth << "x" << currHeight;
+        qDebug() << "Time CPU (OpenCV):" << accumCPU/ui->numTests->value();
+        qDebug() << "Time GPU (ArrayFire):" << accumGPU/ui->numTests->value();
         qDebug() << "CPU/GPU time ratio" << accumCPU/accumGPU;
 
+        ui->log->append("\nDimensions: " + QString::number(currWidth) + " x " + QString::number(currHeight));
+        ui->log->append("Time CPU (OpenCV): " + QString::number(accumCPU/ui->numTests->value()));
+        ui->log->append("Time GPU (ArrayFire): " + QString::number(accumGPU/ui->numTests->value()));
+        if((accumCPU/accumGPU) > 1.0){
+             ui->log->append("CPU/<b style=\"background-color:rgb(0,100,0);color:rgb(255,255,255);\">GPU</b> time ratio: " + QString::number(accumCPU/accumGPU));
+             ui->log->append("GPU is " + QString::number(accumCPU/accumGPU) + " times faster");
+             qDebug() << "GPU is " << QString::number(accumCPU/accumGPU) << " times faster";
+        }
+        else{
+            ui->log->append("<b style=\"background-color:rgb(0,100,0);color:rgb(255,255,255);\">CPU</b>/GPU time ratio: " + QString::number(accumCPU/accumGPU));
+            ui->log->append("CPU is " + QString::number(accumGPU/accumCPU) + " times faster");
+            qDebug() << "CPU is " << QString::number(accumGPU/accumCPU) << " times faster";
+        }
+
+
         // update the plot
-        this->xdata.push_back(cc);
-        this->timesCpu.push_back(accumCPU/this->numTests);
-        this->timesGpu.push_back(accumGPU/this->numTests);
+        this->xdata.push_back(currHeight);
+        this->timesCpu.push_back(accumCPU/ui->numTests->value());
+        this->timesGpu.push_back(accumGPU/ui->numTests->value());
         ui->plot->graph(0)->setData(this->xdata, this->timesCpu);
         ui->plot->graph(1)->setData(this->xdata, this->timesGpu);
         ui->plot->replot();
+
+        currWidth+=ui->increment->value();
+        currHeight+=ui->increment->value();
+    }
+
+    if(ui->howManyIncrements->value() > 0){
+        qDebug() << "\nTest finished:" << QDateTime::currentDateTime().toString().toUpper() << "\n..........\n\n";
+        ui->log->append("\nTest finished: " + QDateTime::currentDateTime().toString().toUpper() + "\n..........\n\n");
     }
 }

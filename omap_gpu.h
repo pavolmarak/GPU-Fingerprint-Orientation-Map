@@ -13,7 +13,7 @@ class OMap_GPU : public QObject
     Q_OBJECT
 public:
     explicit OMap_GPU(QObject *parent = nullptr);
-    void setParams(af::array imgFingerprint_, int &blockSize_, GAUSSIAN_BLUR_SETTINGS &gaussBlurBasic_, GAUSSIAN_BLUR_SETTINGS &gaussBlurAdvanced_);
+    void setParams(af::array imgFingerprint_, int blockSize_, GAUSSIAN_BLUR_SETTINGS &gaussBlurBasic_, GAUSSIAN_BLUR_SETTINGS &gaussBlurAdvanced_);
     double computeBasicMap();
     void computeAdvancedMap();
     void drawBasicMap();
