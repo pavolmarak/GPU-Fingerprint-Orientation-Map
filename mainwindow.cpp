@@ -36,7 +36,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::on_runTestBTN_clicked()
-{
+{ 
     // declarations
     GaussianBlurSettings gbsBasic{5,1.0}, gbsAdvanced{121,10.0};
     cv::Mat imgMat, imgMat_transposed;
@@ -63,14 +63,14 @@ void MainWindow::on_runTestBTN_clicked()
     // testovanie pre rozne rozmery
     for(int cc = 0;cc<ui->howManyIncrements->value();cc++){
         // loading an image
-        // imgMat = cv::imread("./db/94_3.tif",cv::IMREAD_GRAYSCALE);
+        //imgMat = cv::imread("./db/88_2.tif",cv::IMREAD_GRAYSCALE);
         imgMat = cv::Mat(currHeight,currWidth,CV_8UC1);
         cv::transpose(imgMat,imgMat_transposed);
         af::array imgAf(imgMat.rows, imgMat.cols, imgMat_transposed.data);
 
         // CPU computation
         omap.setParams(imgMat,ui->omapBlockSize->value(),gbsBasic, gbsAdvanced);
-        double accumCPU=0.000000;
+        double accumCPU=0.0;
         for(int i=0;i<ui->numTests->value();i++){
             accumCPU += omap.computeBasicMap();
             qApp->processEvents();
