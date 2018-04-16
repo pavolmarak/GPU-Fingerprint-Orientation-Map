@@ -62,9 +62,40 @@ double OMap_GPU::computeBasicMap()
 }
 
 // function to compute advanced (expanded) O-Map
-void OMap_GPU::computeAdvancedMap()
+double OMap_GPU::computeAdvancedMap()
 {
+    af::timer t;
+    t.start();
 
+    // compute the basic O-Map first
+    this->computeBasicMap();
+
+    // basic O-Map expansion
+    this->oMap_advanced = af::moddims(this->oMap_basic,1,this->oMap_basic.dims(0)*this->oMap_basic.dims(1));
+    this->oMap_advanced = af::tile(this->oMap_advanced,this->blockSize*this->blockSize);
+    this->oMap_advanced = af::wrap(this->oMap_advanced,
+                                   this->oMap_basic.dims(0)*this->blockSize,
+                                   this->oMap_basic.dims(1)*this->blockSize,
+                                   this->blockSize,
+                                   this->blockSize,
+                                   this->blockSize,
+                                   this->blockSize);
+
+    // smoothing the expanded O-Map
+    af::array sinTheta = af::sin(2*this->oMap_advanced);
+    af::array cosTheta = af::cos(2*this->oMap_advanced);
+    af::array gk = af::gaussianKernel(this->gaussBlurAdvanced.blockSize,
+                                      this->gaussBlurAdvanced.blockSize,
+                                      this->gaussBlurAdvanced.sigma,
+                                      this->gaussBlurAdvanced.sigma);
+
+    sinTheta = af::convolve(sinTheta, gk);
+    cosTheta = af::convolve(cosTheta, gk);
+
+    this->oMap_advanced = 0.5* af::atan2(sinTheta, cosTheta);
+
+    // return time elapsed
+    return t.stop();
 }
 
 // function to draw basic O-Map on top of the original image

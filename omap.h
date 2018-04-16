@@ -17,12 +17,11 @@ public:
     explicit OMap(QObject *parent = nullptr);
     void setParams(const cv::Mat &imgFingerprint_, int blockSize_, GAUSSIAN_BLUR_SETTINGS &gaussBlurBasic_, GAUSSIAN_BLUR_SETTINGS &gaussBlurAdvanced_);
     double computeBasicMap();
-    void computeAdvancedMap();
+    double computeAdvancedMap();
     void drawBasicMap(const cv::Mat &imgOriginal);
     cv::Mat getImgOMap_basic() const;
     cv::Mat getOMap_advanced() const;
     cv::Mat getOMap_basic() const;
-
 
 signals:
 

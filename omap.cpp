@@ -74,8 +74,11 @@ double OMap::computeBasicMap()
 }
 
 // function to compute advanced (expanded) O-Map
-void OMap::computeAdvancedMap()
+double OMap::computeAdvancedMap()
 {
+    QElapsedTimer timer;
+    timer.start();
+
     // compute the basic O-Map first
     this->computeBasicMap();
 
@@ -101,13 +104,24 @@ void OMap::computeAdvancedMap()
         }
     }
 
-    cv::GaussianBlur(cosTheta_Advanced, cosTheta_Advanced, cv::Size(this->gaussBlurAdvanced.blockSize, this->gaussBlurAdvanced.blockSize),this->gaussBlurAdvanced.sigma,this->gaussBlurAdvanced.sigma);
-    cv::GaussianBlur(sinTheta_Advanced, sinTheta_Advanced, cv::Size(this->gaussBlurAdvanced.blockSize,this->gaussBlurAdvanced.blockSize),this->gaussBlurAdvanced.sigma,this->gaussBlurAdvanced.sigma);
+    cv::GaussianBlur(cosTheta_Advanced,
+                     cosTheta_Advanced,
+                     cv::Size(this->gaussBlurAdvanced.blockSize, this->gaussBlurAdvanced.blockSize),
+                     this->gaussBlurAdvanced.sigma,
+                     this->gaussBlurAdvanced.sigma);
+    cv::GaussianBlur(sinTheta_Advanced,
+                     sinTheta_Advanced,
+                     cv::Size(this->gaussBlurAdvanced.blockSize,this->gaussBlurAdvanced.blockSize),
+                     this->gaussBlurAdvanced.sigma,
+                     this->gaussBlurAdvanced.sigma);
     for(int i = 0; i < this->oMap_advanced.rows; i++) {
         for(int j = 0; j < this->oMap_advanced.cols; j++) {
             this->oMap_advanced.at<double>(i, j) = 0.5 * atan2(sinTheta_Advanced.at<double>(i, j),cosTheta_Advanced.at<double>(i, j));
         }
     }
+
+    // return time elapsed
+    return timer.nsecsElapsed()/1000000000.0;
 }
 
 // function to draw basic O-Map on top of the original image

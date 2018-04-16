@@ -76,18 +76,18 @@ void MainWindow::on_runTestBTN_clicked()
         omap.setParams(imgMat,ui->omapBlockSize->value(),gbsBasic, gbsAdvanced);
         double accumCPU=0.0;
         for(int i=0;i<ui->numTests->value();i++){
-            accumCPU += omap.computeBasicMap();
+            accumCPU += omap.computeAdvancedMap();
             qApp->processEvents();
         }
 
         // GPU computation
         omap_gpu.setParams(imgAf,ui->omapBlockSize->value(),gbsBasic,gbsAdvanced);
         // GPU warm-up
-        omap_gpu.computeBasicMap(); // could be done better
+        omap_gpu.computeAdvancedMap(); // could be done better
         //omap_gpu.drawBasicMap();
         double accumGPU=0.0;
         for(int i=0;i<ui->numTests->value();i++){
-            accumGPU += omap_gpu.computeBasicMap();
+            accumGPU += omap_gpu.computeAdvancedMap();
             qApp->processEvents();
         }
 
@@ -150,7 +150,8 @@ void MainWindow::on_chooseFileVis_clicked()
         // set parameters for O-Map computation
         omapGPU.setParams(imgAf,ui->omapVisBlk->value(),gbsBasic,gbsAdvanced);
         // compute basic O-Map
-        omapGPU.computeBasicMap();
+        //omapGPU.computeBasicMap();
+        omapGPU.computeAdvancedMap();
         // draw and display map
         omapGPU.drawBasicMap();
     }
