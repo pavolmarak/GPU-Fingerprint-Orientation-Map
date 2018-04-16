@@ -11,5 +11,5 @@ You need to provide valid paths to these libraries and their header files in `.p
 **Important notice:**
 This software was tested only in Windows 10 Education.
 
-![alt text](img/app_1_1_0.png "Application's user interface")
+![alt text](img/app.png "Application's user interface")
 
