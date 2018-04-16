@@ -7,7 +7,7 @@ OMap_GPU::OMap_GPU(QObject *parent) : QObject(parent)
 
 }
 
-
+// function to set parameters of O-Map computation
 void OMap_GPU::setParams(af::array imgFingerprint_, int blockSize_, GAUSSIAN_BLUR_SETTINGS &gaussBlurBasic_, GAUSSIAN_BLUR_SETTINGS &gaussBlurAdvanced_)
 {
     this->imgFingerprint = imgFingerprint_;
@@ -16,6 +16,7 @@ void OMap_GPU::setParams(af::array imgFingerprint_, int blockSize_, GAUSSIAN_BLU
     this->gaussBlurAdvanced = gaussBlurAdvanced_;
 }
 
+// function to compute O-map on GPU
 double OMap_GPU::computeBasicMap()
 {
     af::timer t;
@@ -29,10 +30,10 @@ double OMap_GPU::computeBasicMap()
     int paddingX = this->imgFingerprint.dims(1) - width*this->blockSize;
     int paddingY = this->imgFingerprint.dims(0) - height*this->blockSize;
 
-    // vypocet gradientov x a y
+    // computing gradients Gx and Gy
     af::sobel(Gx,Gy,this->imgFingerprint);
 
-    // vypocet Vx,Vy a Theta
+    // computing O-Map
     af::array GxCut = Gx(af::seq(paddingY/2,height*this->blockSize+paddingY/2-1), af::seq(paddingX/2,width*this->blockSize+paddingX/2-1));
     af::array GyCut = Gy(af::seq(paddingY/2,height*this->blockSize+paddingY/2-1), af::seq(paddingX/2,width*this->blockSize+paddingX/2-1));
 
@@ -45,7 +46,7 @@ double OMap_GPU::computeBasicMap()
 
     this->oMap_basic = af::moddims(this->oMap_basic,height,width);
 
-    // vyhladenie smerovej mapy
+    // smoothing the O-Map
     af::array sinTheta = af::sin(2*this->oMap_basic);
     af::array cosTheta = af::cos(2*this->oMap_basic);
 
@@ -56,27 +57,34 @@ double OMap_GPU::computeBasicMap()
 
     this->oMap_basic = 0.5* af::atan2(sinTheta, cosTheta);
 
+    // return time elapsed
     return t.stop();
 }
 
+// function to compute advanced (expanded) O-Map
 void OMap_GPU::computeAdvancedMap()
 {
 
 }
 
-
+// function to draw basic O-Map on top of the original image
+// the resulting image is stored in local variable 'basicOmapImage'
 void OMap_GPU::drawBasicMap()
 {
-
+    // fingeprint image is transferred from VRAM to RAM
     unsigned char* dataImg = this->imgFingerprint.T().host<unsigned char>();
+    // basic O-Map is transferred from VRAM to RAM
     float* dataOmap = this->oMap_basic.T().host<float>();
 
+    // creating original image as cv::Mat
     cv::Mat imgOriginalp(this->imgFingerprint.dims(0),this->imgFingerprint.dims(1),CV_8UC1,dataImg);
+    // creating basic O-Map as cv::Mat
     cv::Mat OMap_basic(this->oMap_basic.dims(0),this->oMap_basic.dims(1),CV_32FC1,dataOmap);
-    cv::Mat imgOMap_basic(this->imgFingerprint.dims(0),this->imgFingerprint.dims(1),CV_8UC3);
+    // creating empty basic O-Map image
+    cv::Mat basicOmapImage(this->imgFingerprint.dims(0),this->imgFingerprint.dims(1),CV_8UC3);
 
-    // farebny obrazok smerovej mapy po vyhladeni
-    cv::cvtColor(imgOriginalp, imgOMap_basic, CV_GRAY2RGB);
+    // basic O-Map image has the original fingerprint image as the bottom layer
+    cv::cvtColor(imgOriginalp, basicOmapImage, CV_GRAY2RGB);
 
     int height = floor(imgOriginalp.rows/this->blockSize);
     int width = floor(imgOriginalp.cols/this->blockSize);
@@ -86,6 +94,7 @@ void OMap_GPU::drawBasicMap()
     int colsMat = OMap_basic.cols;
     double row1, col1, row2, col2, row3, col3, direction;
 
+    // draw vector arrows on top of the fingerprint image
     for (int y = 0; y<rowsMat; y++){
         for(int x =0; x<colsMat; x++){
             direction = OMap_basic.at<float>(y,x)+CV_PI/2;
@@ -97,32 +106,40 @@ void OMap_GPU::drawBasicMap()
             col3 = col1 + cos(direction)*this->blockSize/2;
             cv::Point endPoint(col2,row2);
             cv::Point endPoint2(col3, row3);
-            cv::line(imgOMap_basic, endPoint, endPoint2, cv::Scalar(0,255,0),1,4,0);
+            cv::line(basicOmapImage, endPoint, endPoint2, cv::Scalar(0,255,0),1,4,0);
         }
     }
 
-    cv::imshow("O-Map",imgOMap_basic);
+    // display the resulting basic O-Map image
+    cv::imshow("O-Map",basicOmapImage);
 }
+
+// function to get basic O-Map image
+// right now it returns an empty matrix
 af::array OMap_GPU::getImgOMap_basic() const
 {
     return imgOMap_basic;
 }
 
+// function to get advanced (expanded) O-Map
 af::array OMap_GPU::getOMap_advanced() const
 {
     return oMap_advanced;
 }
 
+// function to get basic O-Map
 af::array OMap_GPU::getOMap_basic() const
 {
     return oMap_basic;
 }
 
+// helper function to display input af::array dimensions
 void OMap_GPU::printDim(af::array & arr)
 {
     qDebug() << arr.dims(0) << arr.dims(1) << arr.dims(2) << arr.dims(3);
 }
 
+// helper function to display af::array image
 void OMap_GPU::showImg(const af::array & afmat, const char* text)
 {
     af::Window window(afmat.dims(0), afmat.dims(1), text);

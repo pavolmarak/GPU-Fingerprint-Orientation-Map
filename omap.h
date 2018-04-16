@@ -28,12 +28,12 @@ signals:
 
 public slots:
 private:
-    cv::Mat imgFingerprint; // obrazok odtlacku
-    int blockSize; // velkost bloku pre smerovu mapu
+    cv::Mat imgFingerprint; // fingerprint image
+    int blockSize; // O-Map block size
     GAUSSIAN_BLUR_SETTINGS gaussBlurBasic, gaussBlurAdvanced;
-    cv::Mat oMap_basic; // BASIC smerova mapa (vyhladena, jeden smer pre cely blok)
-    cv::Mat oMap_advanced; // ADVANCED smerova mapa (vyhladena, kazdy pixel ma svoj smer)
-    cv::Mat imgOMap_basic; // obrazok BASIC smerovej mapy (ADVANCED mapa sa neda zobrazit, lebo kazdy pixel ma iny smer)
+    cv::Mat oMap_basic; // basic smoothed O-Map, 1 direction for each block
+    cv::Mat oMap_advanced; // advanced smoothed O-Map, 1 direction for each pixel
+    cv::Mat imgOMap_basic; // basic O-map as image (advanced O-map cannot be displayed since each pixel has different direction)
 };
 
 #endif // OMAP_H

@@ -1,10 +1,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// nastavenia pre funkciu GaussianBlur, ktora sa pouziva na vyhladenie smerovej mapy
+// Gaussian blur parameters
 struct GaussianBlurSettings {
-    int blockSize;  // velkost bloku pre vyhladenie smerovej mapy (cez bloky)
-    double sigma;   // sigma pre vyhladenie smerovej mapy
+    int blockSize;  // Gaussian kernel size
+    double sigma;   // Sigma for Gaussian kernel
 };
 
 typedef struct GaussianBlurSettings GAUSSIAN_BLUR_SETTINGS;

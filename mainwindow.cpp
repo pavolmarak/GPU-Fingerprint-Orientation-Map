@@ -43,24 +43,28 @@ void MainWindow::on_runTestBTN_clicked()
     OMap omap;
     OMap_GPU omap_gpu;
 
+    // taking current image size from GUI
     int currWidth = ui->currentWidth->value();
     int currHeight = ui->currentHeight->value();
 
+    // checking if O-Map block size is smaller than both image dimensions
     if(currHeight < ui->omapBlockSize->value() || currWidth < ui->omapBlockSize->value()){
         ui->log->append("<span style=\"color:red;\">O-Map blocksize must be equal or higher than any of the dimensions.</span><br>");
         return;
     }
 
+    // clearing data vectors before plotting
     this->xdata.clear();
     this->timesCpu.clear();
     this->timesGpu.clear();
 
+    // checking if there is at least one test to be performed
     if(ui->howManyIncrements->value() > 0){
         qDebug() << "Test time:" << QDateTime::currentDateTime().toString().toUpper();
         ui->log->append("<b>Test time:</b> " + QDateTime::currentDateTime().toString().toUpper());
     }
 
-    // testovanie pre rozne rozmery
+    // testing loop for increasing image size
     for(int cc = 0;cc<ui->howManyIncrements->value();cc++){
         // loading an image
         //imgMat = cv::imread("./db/88_2.tif",cv::IMREAD_GRAYSCALE);
@@ -79,7 +83,7 @@ void MainWindow::on_runTestBTN_clicked()
         // GPU computation
         omap_gpu.setParams(imgAf,ui->omapBlockSize->value(),gbsBasic,gbsAdvanced);
         // GPU warm-up
-        omap_gpu.computeBasicMap();
+        omap_gpu.computeBasicMap(); // could be done better
         //omap_gpu.drawBasicMap();
         double accumGPU=0.0;
         for(int i=0;i<ui->numTests->value();i++){
@@ -107,7 +111,6 @@ void MainWindow::on_runTestBTN_clicked()
             qDebug() << "CPU is " << QString::number(accumGPU/accumCPU) << " times faster";
         }
 
-
         // update the plot
         this->xdata.push_back(currHeight);
         this->timesCpu.push_back(accumCPU/ui->numTests->value());
@@ -116,10 +119,12 @@ void MainWindow::on_runTestBTN_clicked()
         ui->plot->graph(1)->setData(this->xdata, this->timesGpu);
         ui->plot->replot();
 
+        // update the image size
         currWidth+=ui->increment->value();
         currHeight+=ui->increment->value();
     }
 
+    // checking if there is at least one test to be performed
     if(ui->howManyIncrements->value() > 0){
         qDebug() << "\nTest finished:" << QDateTime::currentDateTime().toString().toUpper() << "\n..........\n\n";
         ui->log->append("\nTest finished: " + QDateTime::currentDateTime().toString().toUpper() + "\n..........\n\n");

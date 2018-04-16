@@ -27,14 +27,12 @@ signals:
 
 public slots:
 private:
-    af::array imgFingerprint; // obrazok odtlacku
-    int blockSize; // velkost bloku pre smerovu mapu
+    af::array imgFingerprint; // fingerprint image
+    int blockSize; // O-Map block size
     GAUSSIAN_BLUR_SETTINGS gaussBlurBasic, gaussBlurAdvanced;
-    af::array oMap_basic; // BASIC smerova mapa (vyhladena, jeden smer pre cely blok)
-    af::array oMap_advanced; // ADVANCED smerova mapa (vyhladena, kazdy pixel ma svoj smer)
-    af::array imgOMap_basic; // obrazok BASIC smerovej mapy (ADVANCED mapa sa neda zobrazit, lebo kazdy pixel ma iny smer)
-
-
+    af::array oMap_basic;  // basic smoothed O-Map, 1 direction for each block
+    af::array oMap_advanced; // advanced smoothed O-Map, 1 direction for each pixel
+    af::array imgOMap_basic; // basic O-map as image (advanced O-map cannot be displayed since each pixel has different direction)
 };
 
 #endif // OMAP_GPU_H
