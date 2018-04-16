@@ -94,6 +94,9 @@ double OMap_GPU::computeAdvancedMap()
 
     this->oMap_advanced = 0.5* af::atan2(sinTheta, cosTheta);
 
+    //    showImg(this->oMap_basic,"Basic");
+    //    showImg(this->oMap_advanced,"Advanced");
+
     // return time elapsed
     return t.stop();
 }
