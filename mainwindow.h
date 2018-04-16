@@ -29,6 +29,8 @@ private slots:
 
     void on_runTestBTN_clicked();
 
+    void on_chooseFileVis_clicked();
+
 private:
     Ui::MainWindow *ui;
     QImage img;

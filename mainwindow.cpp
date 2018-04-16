@@ -130,3 +130,33 @@ void MainWindow::on_runTestBTN_clicked()
         ui->log->append("\nTest finished: " + QDateTime::currentDateTime().toString().toUpper() + "\n..........\n\n");
     }
 }
+
+// function to show O-Map of selected image
+void MainWindow::on_chooseFileVis_clicked()
+{
+    // create an instance of OMap_GPU
+    OMap_GPU omapGPU;
+    // create Gaussian blur settings
+    GaussianBlurSettings gbsBasic{5,1.0}, gbsAdvanced{121,10.0};
+    // path to image file user selected
+    QString str = QFileDialog::getOpenFileName(this,"Choose image file",".","*.tif *.png *.bmp *.jpg");
+    // load image to af::array
+
+    try{
+        af::array imgAf = af::loadImage(str.toStdString().c_str()).as(u8);
+        qDebug() << "Image loaded successfully.";
+        ui->log->append("\nImage loaded successfully.");
+        qApp->processEvents();
+        // set parameters for O-Map computation
+        omapGPU.setParams(imgAf,ui->omapVisBlk->value(),gbsBasic,gbsAdvanced);
+        // compute basic O-Map
+        omapGPU.computeBasicMap();
+        // draw and display map
+        omapGPU.drawBasicMap();
+    }
+    catch(af::exception& ex){
+        qDebug() << ex.what();
+        ui->log->append(QString("\n.................\n") + ex.what());
+    }
+
+}

@@ -69,6 +69,16 @@ public:
     QSpacerItem *horizontalSpacer;
     QHBoxLayout *horizontalLayout;
     QCustomPlot *plot;
+    QVBoxLayout *verticalLayout_6;
+    QGroupBox *groupBox_6;
+    QHBoxLayout *horizontalLayout_12;
+    QPushButton *chooseFileVis;
+    QLabel *label_6;
+    QSpinBox *omapVisBlk;
+    QHBoxLayout *horizontalLayout_13;
+    QSpacerItem *horizontalSpacer_3;
+    QLabel *label_7;
+    QSpacerItem *horizontalSpacer_2;
     QGroupBox *groupBox_5;
     QVBoxLayout *verticalLayout_5;
     QTextEdit *log;
@@ -299,6 +309,58 @@ public:
 
         horizontalLayout_2->addLayout(verticalLayout);
 
+        verticalLayout_6 = new QVBoxLayout();
+        verticalLayout_6->setSpacing(6);
+        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
+        groupBox_6 = new QGroupBox(centralWidget);
+        groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
+        horizontalLayout_12 = new QHBoxLayout(groupBox_6);
+        horizontalLayout_12->setSpacing(6);
+        horizontalLayout_12->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_12->setObjectName(QStringLiteral("horizontalLayout_12"));
+        chooseFileVis = new QPushButton(groupBox_6);
+        chooseFileVis->setObjectName(QStringLiteral("chooseFileVis"));
+
+        horizontalLayout_12->addWidget(chooseFileVis);
+
+        label_6 = new QLabel(groupBox_6);
+        label_6->setObjectName(QStringLiteral("label_6"));
+
+        horizontalLayout_12->addWidget(label_6, 0, Qt::AlignRight);
+
+        omapVisBlk = new QSpinBox(groupBox_6);
+        omapVisBlk->setObjectName(QStringLiteral("omapVisBlk"));
+        omapVisBlk->setMinimum(1);
+        omapVisBlk->setMaximum(5000);
+        omapVisBlk->setValue(13);
+
+        horizontalLayout_12->addWidget(omapVisBlk);
+
+
+        verticalLayout_6->addWidget(groupBox_6);
+
+        horizontalLayout_13 = new QHBoxLayout();
+        horizontalLayout_13->setSpacing(6);
+        horizontalLayout_13->setObjectName(QStringLiteral("horizontalLayout_13"));
+        horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_13->addItem(horizontalSpacer_3);
+
+        label_7 = new QLabel(centralWidget);
+        label_7->setObjectName(QStringLiteral("label_7"));
+        sizePolicy1.setHeightForWidth(label_7->sizePolicy().hasHeightForWidth());
+        label_7->setSizePolicy(sizePolicy1);
+        label_7->setWordWrap(false);
+
+        horizontalLayout_13->addWidget(label_7);
+
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_13->addItem(horizontalSpacer_2);
+
+
+        verticalLayout_6->addLayout(horizontalLayout_13);
+
         groupBox_5 = new QGroupBox(centralWidget);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
         verticalLayout_5 = new QVBoxLayout(groupBox_5);
@@ -322,7 +384,10 @@ public:
         verticalLayout_5->addWidget(label_5, 0, Qt::AlignHCenter);
 
 
-        horizontalLayout_2->addWidget(groupBox_5);
+        verticalLayout_6->addWidget(groupBox_5);
+
+
+        horizontalLayout_2->addLayout(verticalLayout_6);
 
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
@@ -355,6 +420,10 @@ public:
         label_4->setText(QApplication::translate("MainWindow", "How many increments?", nullptr));
         omapBlockSizeLabel_2->setText(QApplication::translate("MainWindow", "Number of tests per size", nullptr));
         runTestBTN->setText(QApplication::translate("MainWindow", "Run test", nullptr));
+        groupBox_6->setTitle(QApplication::translate("MainWindow", "GPU O-Map visualization", nullptr));
+        chooseFileVis->setText(QApplication::translate("MainWindow", "Choose file", nullptr));
+        label_6->setText(QApplication::translate("MainWindow", "O-Map block size", nullptr));
+        label_7->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Notice: </span>First run on GPU is always slower.</p></body></html>", nullptr));
         groupBox_5->setTitle(QApplication::translate("MainWindow", "Log", nullptr));
         label_5->setText(QApplication::translate("MainWindow", "Green color indicates shorter processing time", nullptr));
     } // retranslateUi
