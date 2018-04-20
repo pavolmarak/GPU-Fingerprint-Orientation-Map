@@ -10,10 +10,16 @@ OMap_GPU::OMap_GPU(QObject *parent) : QObject(parent)
 // function to set parameters of O-Map computation
 void OMap_GPU::setParams(af::array imgFingerprint_, int blockSize_, GAUSSIAN_BLUR_SETTINGS &gaussBlurBasic_, GAUSSIAN_BLUR_SETTINGS &gaussBlurAdvanced_)
 {
-    this->imgFingerprint = imgFingerprint_;
-    this->blockSize = blockSize_;
-    this->gaussBlurBasic = gaussBlurBasic_;
-    this->gaussBlurAdvanced = gaussBlurAdvanced_;
+    try{
+        this->imgFingerprint = imgFingerprint_;
+        this->blockSize = blockSize_;
+        this->gaussBlurBasic = gaussBlurBasic_;
+        this->gaussBlurAdvanced = gaussBlurAdvanced_;
+    }
+    catch(af::exception& ex){
+        qDebug() << "ArrayFire exception during settings parameters: " << ex.what();
+        exit(EXIT_FAILURE);
+    }
 }
 
 // function to compute O-map on GPU
@@ -22,41 +28,47 @@ double OMap_GPU::computeBasicMap()
     af::timer t;
     t.start();
 
-    af::array Gx, Gy;
-    int height, width;
-    af::array Vx, Vy;
-    height = floor(this->imgFingerprint.dims(0) / this->blockSize);
-    width = floor(this->imgFingerprint.dims(1) / this->blockSize);
-    int paddingX = this->imgFingerprint.dims(1) - width*this->blockSize;
-    int paddingY = this->imgFingerprint.dims(0) - height*this->blockSize;
+    try{
+        af::array Gx, Gy;
+        int height, width;
+        af::array Vx, Vy;
+        height = floor(this->imgFingerprint.dims(0) / this->blockSize);
+        width = floor(this->imgFingerprint.dims(1) / this->blockSize);
+        int paddingX = this->imgFingerprint.dims(1) - width*this->blockSize;
+        int paddingY = this->imgFingerprint.dims(0) - height*this->blockSize;
 
-    // computing gradients Gx and Gy
-    af::sobel(Gx,Gy,this->imgFingerprint);
+        // computing gradients Gx and Gy
+        af::sobel(Gx,Gy,this->imgFingerprint);
 
-    // computing O-Map
-    af::array GxCut = Gx(af::seq(paddingY/2,height*this->blockSize+paddingY/2-1), af::seq(paddingX/2,width*this->blockSize+paddingX/2-1));
-    af::array GyCut = Gy(af::seq(paddingY/2,height*this->blockSize+paddingY/2-1), af::seq(paddingX/2,width*this->blockSize+paddingX/2-1));
+        // computing O-Map
+        af::array GxCut = Gx(af::seq(paddingY/2,height*this->blockSize+paddingY/2-1), af::seq(paddingX/2,width*this->blockSize+paddingX/2-1));
+        af::array GyCut = Gy(af::seq(paddingY/2,height*this->blockSize+paddingY/2-1), af::seq(paddingX/2,width*this->blockSize+paddingX/2-1));
 
-    GxCut = af::unwrap(GxCut, this->blockSize,this->blockSize,this->blockSize,this->blockSize);
-    GyCut = af::unwrap(GyCut, this->blockSize,this->blockSize,this->blockSize,this->blockSize);
+        GxCut = af::unwrap(GxCut, this->blockSize,this->blockSize,this->blockSize,this->blockSize);
+        GyCut = af::unwrap(GyCut, this->blockSize,this->blockSize,this->blockSize,this->blockSize);
 
-    Vx =  af::sum(2*GxCut*GyCut);
-    Vy =  af::sum(af::pow(GxCut,2)-af::pow(GyCut,2));
-    this->oMap_basic = 0.5* af::atan2(Vx.as(f32),Vy.as(f32));
+        Vx =  af::sum(2*GxCut*GyCut);
+        Vy =  af::sum(af::pow(GxCut,2)-af::pow(GyCut,2));
+        this->oMap_basic = 0.5* af::atan2(Vx.as(f32),Vy.as(f32));
 
-    this->oMap_basic = af::moddims(this->oMap_basic,height,width);
+        this->oMap_basic = af::moddims(this->oMap_basic,height,width);
 
-    // smoothing the O-Map
-    af::array sinTheta = af::sin(2*this->oMap_basic);
-    af::array cosTheta = af::cos(2*this->oMap_basic);
+        // smoothing the O-Map
+        af::array sinTheta = af::sin(2*this->oMap_basic);
+        af::array cosTheta = af::cos(2*this->oMap_basic);
 
-    af::array gk = af::gaussianKernel(this->gaussBlurBasic.blockSize, this->gaussBlurBasic.blockSize, this->gaussBlurBasic.sigma, this->gaussBlurBasic.sigma);
+        af::array gk = af::gaussianKernel(this->gaussBlurBasic.blockSize, this->gaussBlurBasic.blockSize, this->gaussBlurBasic.sigma, this->gaussBlurBasic.sigma);
 
-    sinTheta = af::convolve(sinTheta, gk);
-    cosTheta = af::convolve(cosTheta, gk);
+        sinTheta = af::convolve(sinTheta, gk);
+        cosTheta = af::convolve(cosTheta, gk);
 
-    this->oMap_basic = 0.5* af::atan2(sinTheta, cosTheta);
+        this->oMap_basic = 0.5* af::atan2(sinTheta, cosTheta);
 
+    }
+    catch(af::exception& ex){
+        qDebug() << "ArrayFire exception during basic O-Map computation: " << ex.what();
+        exit(EXIT_FAILURE);
+    }
     // return time elapsed
     return t.stop();
 }
@@ -70,32 +82,37 @@ double OMap_GPU::computeAdvancedMap()
     // compute the basic O-Map first
     this->computeBasicMap();
 
-    // basic O-Map expansion
-    this->oMap_advanced = af::moddims(this->oMap_basic,1,this->oMap_basic.dims(0)*this->oMap_basic.dims(1));
-    this->oMap_advanced = af::tile(this->oMap_advanced,this->blockSize*this->blockSize);
-    this->oMap_advanced = af::wrap(this->oMap_advanced,
-                                   this->oMap_basic.dims(0)*this->blockSize,
-                                   this->oMap_basic.dims(1)*this->blockSize,
-                                   this->blockSize,
-                                   this->blockSize,
-                                   this->blockSize,
-                                   this->blockSize);
+    try{
 
-    // smoothing the expanded O-Map
-    af::array sinTheta = af::sin(2*this->oMap_advanced);
-    af::array cosTheta = af::cos(2*this->oMap_advanced);
-    af::array gk = af::gaussianKernel(this->gaussBlurAdvanced.blockSize,
-                                      this->gaussBlurAdvanced.blockSize,
-                                      this->gaussBlurAdvanced.sigma,
-                                      this->gaussBlurAdvanced.sigma);
 
-    sinTheta = af::convolve(sinTheta, gk);
-    cosTheta = af::convolve(cosTheta, gk);
+        // basic O-Map expansion
+        this->oMap_advanced = af::moddims(this->oMap_basic,1,this->oMap_basic.dims(0)*this->oMap_basic.dims(1));
+        this->oMap_advanced = af::tile(this->oMap_advanced,this->blockSize*this->blockSize);
+        this->oMap_advanced = af::wrap(this->oMap_advanced,
+                                       this->oMap_basic.dims(0)*this->blockSize,
+                                       this->oMap_basic.dims(1)*this->blockSize,
+                                       this->blockSize,
+                                       this->blockSize,
+                                       this->blockSize,
+                                       this->blockSize);
 
-    this->oMap_advanced = 0.5* af::atan2(sinTheta, cosTheta);
+        // smoothing the expanded O-Map
+        af::array sinTheta = af::sin(2*this->oMap_advanced);
+        af::array cosTheta = af::cos(2*this->oMap_advanced);
+        af::array gk = af::gaussianKernel(this->gaussBlurAdvanced.blockSize,
+                                          this->gaussBlurAdvanced.blockSize,
+                                          this->gaussBlurAdvanced.sigma,
+                                          this->gaussBlurAdvanced.sigma);
 
-    //    showImg(this->oMap_basic,"Basic");
-    //    showImg(this->oMap_advanced,"Advanced");
+        sinTheta = af::convolve(sinTheta, gk);
+        cosTheta = af::convolve(cosTheta, gk);
+
+        this->oMap_advanced = 0.5* af::atan2(sinTheta, cosTheta);
+    }
+    catch(af::exception& ex){
+        qDebug() << "ArrayFire exception during advanced O-Map computation: " << ex.what();
+        exit(EXIT_FAILURE);
+    }
 
     // return time elapsed
     return t.stop();
@@ -105,10 +122,18 @@ double OMap_GPU::computeAdvancedMap()
 // the resulting image is stored in local variable 'basicOmapImage'
 void OMap_GPU::drawBasicMap()
 {
-    // fingeprint image is transferred from VRAM to RAM
-    unsigned char* dataImg = this->imgFingerprint.T().host<unsigned char>();
-    // basic O-Map is transferred from VRAM to RAM
-    float* dataOmap = this->oMap_basic.T().host<float>();
+    unsigned char* dataImg = nullptr;
+    float* dataOmap = nullptr;
+    try{
+        // fingeprint image is transferred from VRAM to RAM
+        dataImg = this->imgFingerprint.T().host<unsigned char>();
+        // basic O-Map is transferred from VRAM to RAM
+        dataOmap = this->oMap_basic.T().host<float>();
+    }
+    catch(af::exception& ex){
+        qDebug() << "ArrayFire exception during drawing basic O-Map: " << ex.what();
+        exit(EXIT_FAILURE);
+    }
 
     // creating original image as cv::Mat
     cv::Mat imgOriginalp(this->imgFingerprint.dims(0),this->imgFingerprint.dims(1),CV_8UC1,dataImg);
@@ -176,8 +201,14 @@ void OMap_GPU::printDim(af::array & arr)
 // helper function to display af::array image
 void OMap_GPU::showImg(const af::array & afmat, const char* text)
 {
-    af::Window window(afmat.dims(0), afmat.dims(1), text);
-    do{
-        window.image(afmat);
-    } while( !window.close() );
+    try{
+        af::Window window(afmat.dims(0), afmat.dims(1), text);
+        do{
+            window.image(afmat);
+        } while( !window.close() );
+    }
+    catch(af::exception& ex){
+        qDebug() << "ArrayFire exception during showing array: " << ex.what();
+        exit(EXIT_FAILURE);
+    }
 }

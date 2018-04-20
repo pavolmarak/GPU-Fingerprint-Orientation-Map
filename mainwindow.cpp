@@ -101,9 +101,9 @@ void MainWindow::on_runTestBTN_clicked()
         ui->log->append("Time CPU (OpenCV): " + QString::number(accumCPU/ui->numTests->value()));
         ui->log->append("Time GPU (ArrayFire): " + QString::number(accumGPU/ui->numTests->value()));
         if((accumCPU/accumGPU) > 1.0){
-             ui->log->append("CPU/<b style=\"background-color:rgb(0,100,0);color:rgb(255,255,255);\">GPU</b> time ratio: " + QString::number(accumCPU/accumGPU));
-             ui->log->append("GPU is " + QString::number(accumCPU/accumGPU) + " times faster");
-             qDebug() << "GPU is " << QString::number(accumCPU/accumGPU) << " times faster";
+            ui->log->append("CPU/<b style=\"background-color:rgb(0,100,0);color:rgb(255,255,255);\">GPU</b> time ratio: " + QString::number(accumCPU/accumGPU));
+            ui->log->append("GPU is " + QString::number(accumCPU/accumGPU) + " times faster");
+            qDebug() << "GPU is " << QString::number(accumCPU/accumGPU) << " times faster";
         }
         else{
             ui->log->append("<b style=\"background-color:rgb(0,100,0);color:rgb(255,255,255);\">CPU</b>/GPU time ratio: " + QString::number(accumCPU/accumGPU));
