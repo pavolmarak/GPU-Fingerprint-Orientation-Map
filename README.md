@@ -15,12 +15,12 @@ This software was tested only in Windows 10 Education.
 
 ![alt text](img/app.png "Application's user interface")
 
-This app calculates **per-pixel (advanced) O-Map**. Standard (basic) O-map represents matrix of directions on per-block basis. For high-accuracy adaptive Gabor filtering we need per-pixel O-map to able to enhance curved ridge lines with maximum effect. The image below shows the difference between both O-map types.
+This app calculates **per-pixel (advanced) O-Map**. Standard (basic) O-map represents matrix of directions on per-block basis. For high-accuracy adaptive Gabor filtering we need per-pixel O-map to able to enhance curved ridge lines with maximum effect. The image below shows the difference between both O-map types computed from 300x300 grayscale image.
 
-Basic O-map (300x300 image, 13 px block)
+Basic O-map (one direction per 13x13 px block)
 
 ![alt text](img/basic.png "Basic O-map")
 
-Advanced O-map (300x300 image, 13 px block)
+Advanced O-map (one direction per each pixel)
 
 ![alt text](img/advanced.png "Advanced O-map")
