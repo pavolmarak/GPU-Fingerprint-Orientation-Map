@@ -19,8 +19,7 @@ This app calculates **per-pixel (advanced) O-Map**. Standard (basic) O-map repre
 
 Basic O-map (one direction per 13x13 px block)
 
-![alt text](img/basic.png "Basic O-map")
-
 Advanced O-map (one direction per each pixel)
 
-![alt text](img/advanced.png "Advanced O-map")
+![alt text](img/omaps.png "Fingerprint O-Maps")
+
